@@ -1,0 +1,29 @@
+{
+  "ID": "com.quinn11235.ConfigurePromotionalWeaponStats",
+  "AssemblyName": "ConfigurePromotionalWeaponStats.dll",
+  "Author": [
+    {
+      "Key": "English",
+      "Value": "Quinn11235"
+    }
+  ],
+  "Version": "1.0",
+  "Name": [
+    {
+      "Key": "English",
+      "Value": "Configure Promotional Weapon Stats"
+    }
+  ],
+  "Description": [
+    {
+      "Key": "English",
+      "Value": "Enables editing of the stats of the promotional weapons:
+Gold Ares
+Gold Firebird
+Gold Hel II
+Phoenix Rising Firebird
+Neon White Deimos"
+    }
+  ],
+  "Dependencies": []
+}
