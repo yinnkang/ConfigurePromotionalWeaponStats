@@ -4,10 +4,10 @@
   "Author": [
     {
       "Key": "English",
-      "Value": "Quinn11235"
+      "Value": "PP Modding Community"
     }
   ],
-  "Version": "1.0",
+  "Version": "2.0",
   "Name": [
     {
       "Key": "English",
@@ -17,12 +17,7 @@
   "Description": [
     {
       "Key": "English",
-      "Value": "Enables editing of the stats of the promotional weapons:
-Gold Ares
-Gold Firebird
-Gold Hel II
-Phoenix Rising Firebird
-Neon White Deimos"
+      "Value": "Configure statistics for promotional weapons: Gold Ares, Gold Firebird, Gold Hel II, Phoenix Rising Firebird, and Neon White Deimos. Allows modification of damage values (base, piercing, paralysing), ammunition capacity, burst fire, range, AP costs, accuracy, weight, and other weapon properties through mod configuration settings."
     }
   ],
   "Dependencies": []
