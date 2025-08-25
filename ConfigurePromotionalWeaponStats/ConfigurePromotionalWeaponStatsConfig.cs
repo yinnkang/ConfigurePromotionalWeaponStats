@@ -91,9 +91,7 @@ namespace ConfigurePromotionalWeaponStats
         public int NeonDeimosArWeight = 3;
         public bool NeonDeimosArStopOnFirstHit = false;
 
-        /// Tobias West Handgun (NJ_Gauss_HandGun_WeaponDef) - Iron Fury HG
-        [ConfigField(text: "Enable Tobias West Handgun Modifications")]
-        public bool EnableTobiasHandgunMods = false;
+        /// Tobias West Handgun (NJ_Gauss_HandGun_WeaponDef) - Iron Fury HG - Always Active
         [ConfigField(text: "Tobias Handgun Damage")]
         public int TobiasHandgunDamage = 80;
         [ConfigField(text: "Tobias Handgun Piercing")]
@@ -102,8 +100,6 @@ namespace ConfigurePromotionalWeaponStats
         public float TobiasHandgunShred = 10f;
         [ConfigField(text: "Tobias Handgun Ammo Capacity")]
         public int TobiasHandgunAmmoCapacity = 12;
-        [ConfigField(text: "Tobias Handgun Spread (in degrees)")]
-        public float TobiasHandgunSpread = 2.8f;
         [ConfigField(text: "Tobias Handgun Effective Range")]
         public int TobiasHandgunEffectiveRange = 18;
         [ConfigField(text: "Tobias Handgun AP Cost (1-4 points)")]

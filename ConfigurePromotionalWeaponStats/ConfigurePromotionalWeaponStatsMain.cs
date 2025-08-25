@@ -130,10 +130,8 @@ namespace ConfigurePromotionalWeaponStats
             setDefsFromWeaponValues(DefaultFirebirdPR, FirebirdPR, FirebirdClip);
             setDefsFromWeaponValues(DefaultWhiteNeonDeimos, WhiteNeonDeimos, DeimosClip);
             setDefsFromWeaponValues(DefaultNeonDeimos, NeonDeimos, DeimosClip);
-            if (Config.EnableTobiasHandgunMods)
-            {
-                setDefsFromWeaponValues(DefaultTobiasHandgun, TobiasHandgun, TobiasHandgunClip);
-            }
+            // Always revert Tobias Handgun (no longer toggleable)
+            setDefsFromWeaponValues(DefaultTobiasHandgun, TobiasHandgun, TobiasHandgunClip);
         }
 
         /// <summary>
@@ -215,30 +213,32 @@ namespace ConfigurePromotionalWeaponStats
             SetupNeonDeimosDamageKeywords(NeonDeimos, Config.NeonDeimosArDamage, Config.NeonDeimosArPiercing, Config.NeonDeimosArViral, Config.NeonDeimosArPoison, Logger);
             SetWeaponPropertiesOnly(NeonDeimos, DeimosClip, Config.NeonDeimosArAmmoCapacity, Config.NeonDeimosArBurst, Config.NeonDeimosArProjectilesPerShot, Config.NeonDeimosArEffectiveRange, Config.NeonDeimosArApCost, Config.NeonDeimosArHandsToUse, Config.NeonDeimosArWeight, Config.NeonDeimosArStopOnFirstHit);
             
-            // Setup Tobias West Handgun modifications if enabled
-            if (Config.EnableTobiasHandgunMods)
+            // Setup Tobias West Handgun modifications (always active)
+            float[] TobiasHandgunDamage = { Config.TobiasHandgunDamage, Config.TobiasHandgunShred };
+            WeaponValues TobiasHandgunValues = new WeaponValues(
+                TobiasHandgunDamage,
+                Config.TobiasHandgunAmmoCapacity,
+                1, // Burst (handguns are single shot)
+                1, // ProjectilesPerShot
+                Config.TobiasHandgunEffectiveRange,
+                Config.TobiasHandgunAPCost,
+                1, // HandsToUse (handguns are 1-handed)
+                DefaultTobiasHandgun.Weight, // Keep original weight
+                true // StopOnFirstHit (typical for handguns)
+            );
+            setDefsFromWeaponValues(TobiasHandgunValues, TobiasHandgun, TobiasHandgunClip);
+            
+            // Set piercing damage (spread is calculated automatically from effective range)
+            if (TobiasHandgun != null)
             {
-                float[] TobiasHandgunDamage = { Config.TobiasHandgunDamage, Config.TobiasHandgunShred };
-                WeaponValues TobiasHandgunValues = new WeaponValues(
-                    TobiasHandgunDamage,
-                    Config.TobiasHandgunAmmoCapacity,
-                    1, // Burst (handguns are single shot)
-                    1, // ProjectilesPerShot
-                    Config.TobiasHandgunEffectiveRange,
-                    Config.TobiasHandgunAPCost,
-                    1, // HandsToUse (handguns are 1-handed)
-                    1, // Weight (keep original weight)
-                    true // StopOnFirstHit (typical for handguns)
-                );
-                setDefsFromWeaponValues(TobiasHandgunValues, TobiasHandgun, TobiasHandgunClip);
+                SetDamageKeywordValue(TobiasHandgun, "pierc", Config.TobiasHandgunPiercing, Logger);
                 
-                // Set piercing damage and spread
-                if (TobiasHandgun != null)
-                {
-                    SetDamageKeywordValue(TobiasHandgun, "pierc", Config.TobiasHandgunPiercing, Logger);
-                    TobiasHandgun.SpreadDegrees = Config.TobiasHandgunSpread;
-                    Logger.LogInfo($"Applied Tobias Handgun modifications: Damage={Config.TobiasHandgunDamage}, Shred={Config.TobiasHandgunShred}, Piercing={Config.TobiasHandgunPiercing}, AmmoCapacity={Config.TobiasHandgunAmmoCapacity}, Spread={Config.TobiasHandgunSpread}, EffectiveRange={Config.TobiasHandgunEffectiveRange}, APCost={Config.TobiasHandgunAPCost} points");
-                }
+                // Ensure weapon is properly categorized as handgun for proficiency
+                // Check if it has proper weapon tags
+                Logger.LogInfo($"Tobias Handgun weapon name: {TobiasHandgun.name}");
+                Logger.LogInfo($"Tobias Handgun tags count: {TobiasHandgun.Tags?.Count ?? 0}");
+                
+                Logger.LogInfo($"Applied Tobias Handgun modifications: Damage={Config.TobiasHandgunDamage}, Shred={Config.TobiasHandgunShred}, Piercing={Config.TobiasHandgunPiercing}, AmmoCapacity={Config.TobiasHandgunAmmoCapacity}, EffectiveRange={Config.TobiasHandgunEffectiveRange}, APCost={Config.TobiasHandgunAPCost} points");
             }
         }
 
