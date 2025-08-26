@@ -91,7 +91,7 @@ namespace ConfigurePromotionalWeaponStats
         public int NeonDeimosArWeight = 3;
         public bool NeonDeimosArStopOnFirstHit = false;
 
-        /// Tobias West Handgun (NJ_Gauss_HandGun_WeaponDef) - Iron Fury HG - Always Active
+        /// Tobias West Handgun (NJ_TobiasWestGun_WeaponDef) - Always Active
         [ConfigField(text: "Tobias Handgun Damage")]
         public int TobiasHandgunDamage = 80;
         [ConfigField(text: "Tobias Handgun Piercing")]

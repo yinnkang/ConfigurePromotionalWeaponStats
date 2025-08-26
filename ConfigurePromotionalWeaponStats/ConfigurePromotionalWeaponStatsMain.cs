@@ -2,6 +2,8 @@ using Base.Core;
 using Base.Defs;
 using Base.Levels;
 using PhoenixPoint.Common.Entities.Items;
+using PhoenixPoint.Common.Entities.GameTags;
+using PhoenixPoint.Common.Entities.GameTagsTypes;
 using PhoenixPoint.Common.Game;
 using PhoenixPoint.Modding;
 using PhoenixPoint.Tactical.Entities.DamageKeywords;
@@ -62,6 +64,7 @@ namespace ConfigurePromotionalWeaponStats
         private WeaponDef AresGold, FirebirdGold, HelGold, FirebirdPR, WhiteNeonDeimos, NeonDeimos, TobiasHandgun;
         private ItemDef AresClip, FirebirdClip, HelClip, DeimosClip, TobiasHandgunClip;
         private WeaponValues DefaultAresGold, DefaultFirebirdGold, DefaultHelGold, DefaultFirebirdPR, DefaultWhiteNeonDeimos, DefaultNeonDeimos, DefaultTobiasHandgun;
+        private bool tobiasTagFixApplied = false;
 
         /// <summary>
         /// Callback for when mod is enabled. Called even on game startup.
@@ -78,7 +81,7 @@ namespace ConfigurePromotionalWeaponStats
                 FirebirdPR = Repo.GetAllDefs<WeaponDef>().FirstOrDefault(a => a.name.Equals("PX_SniperRifle_RisingSun_WeaponDef"));
                 WhiteNeonDeimos = Repo.GetAllDefs<WeaponDef>().FirstOrDefault(a => a.name.Equals("SY_LaserAssaultRifle_WhiteNeon_WeaponDef"));
                 NeonDeimos = Repo.GetAllDefs<WeaponDef>().FirstOrDefault(a => a.name.Equals("SY_LaserAssaultRifle_Neon_WeaponDef"));
-                TobiasHandgun = Repo.GetAllDefs<WeaponDef>().FirstOrDefault(a => a.name.Equals("NJ_Gauss_HandGun_WeaponDef"));
+                TobiasHandgun = Repo.GetAllDefs<WeaponDef>().FirstOrDefault(a => a.name.Equals("NJ_TobiasWestGun_WeaponDef"));
 
                 AresClip = Repo.GetAllDefs<ItemDef>().FirstOrDefault(a => a.name.Equals("PX_AssaultRifle_AmmoClip_ItemDef"));
                 FirebirdClip = Repo.GetAllDefs<ItemDef>().FirstOrDefault(a => a.name.Equals("PX_SniperRifle_AmmoClip_ItemDef"));
@@ -101,7 +104,6 @@ namespace ConfigurePromotionalWeaponStats
                     var hUi = new Harmony("com.quinn11235.CPWS.UIRow");
                     CPWS_UIDamageRowPatch.Install(hUi, Logger, Config);
 
-                    // Optional: only if you added CPWS_TacticalProbe.cs
                     var hProbe = new Harmony("com.quinn11235.CPWS.Probe");
                     CPWS_TacticalProbe.Install(hProbe, Logger);
                 }
@@ -132,6 +134,19 @@ namespace ConfigurePromotionalWeaponStats
             setDefsFromWeaponValues(DefaultNeonDeimos, NeonDeimos, DeimosClip);
             // Always revert Tobias Handgun (no longer toggleable)
             setDefsFromWeaponValues(DefaultTobiasHandgun, TobiasHandgun, TobiasHandgunClip);
+        }
+
+        /// <summary>
+        /// Callback for when level starts - safe time to apply tag fixes after all mods loaded
+        /// </summary>
+        public override void OnLevelStart(Base.Levels.Level level)
+        {
+            // Only apply tag fix once when first level loads (after all mods are initialized)
+            if (!tobiasTagFixApplied)
+            {
+                ApplyTobiasHandgunTagFix();
+                tobiasTagFixApplied = true;
+            }
         }
 
         /// <summary>
@@ -228,15 +243,34 @@ namespace ConfigurePromotionalWeaponStats
             );
             setDefsFromWeaponValues(TobiasHandgunValues, TobiasHandgun, TobiasHandgunClip);
             
-            // Set piercing damage (spread is calculated automatically from effective range)
+            // TEMPORARILY DISABLED: Test without Tobias handgun tag manipulation
             if (TobiasHandgun != null)
             {
                 SetDamageKeywordValue(TobiasHandgun, "pierc", Config.TobiasHandgunPiercing, Logger);
                 
-                // Ensure weapon is properly categorized as handgun for proficiency
-                // Check if it has proper weapon tags
+                // DISABLED: Tag manipulation that might conflict with other mods
+                /*DefRepository Repo = GameUtl.GameComponent<DefRepository>();
+                var handgunTagDef = Repo.GetAllDefs<ItemTypeTagDef>().FirstOrDefault(tag => tag.name.Equals("HandgunItem_TagDef"));
+                if (handgunTagDef != null)
+                {
+                    if (!TobiasHandgun.Tags.Contains(handgunTagDef))
+                    {
+                        TobiasHandgun.Tags.Add(handgunTagDef);
+                        Logger.LogInfo($"Added HandgunItem_TagDef to Tobias West handgun for proper pistol proficiency recognition");
+                    }
+                    else
+                    {
+                        Logger.LogInfo($"Tobias West handgun already has HandgunItem_TagDef");
+                    }
+                }
+                else
+                {
+                    Logger.LogWarning($"HandgunItem_TagDef not found - Tobias West handgun may not be recognized by pistol proficiency mods");
+                }*/
+                
                 Logger.LogInfo($"Tobias Handgun weapon name: {TobiasHandgun.name}");
                 Logger.LogInfo($"Tobias Handgun tags count: {TobiasHandgun.Tags?.Count ?? 0}");
+                Logger.LogInfo($"CPWS: Tobias handgun tag manipulation disabled for testing mod compatibility");
                 
                 Logger.LogInfo($"Applied Tobias Handgun modifications: Damage={Config.TobiasHandgunDamage}, Shred={Config.TobiasHandgunShred}, Piercing={Config.TobiasHandgunPiercing}, AmmoCapacity={Config.TobiasHandgunAmmoCapacity}, EffectiveRange={Config.TobiasHandgunEffectiveRange}, APCost={Config.TobiasHandgunAPCost} points");
             }
@@ -500,6 +534,39 @@ namespace ConfigurePromotionalWeaponStats
             }
         }
 
+        private void ApplyTobiasHandgunTagFix()
+        {
+            try
+            {
+                if (TobiasHandgun != null)
+                {
+                    // Apply tag fix for pistol proficiency recognition - now safe after all mods loaded
+                    DefRepository Repo = GameUtl.GameComponent<DefRepository>();
+                    var handgunTagDef = Repo.GetAllDefs<ItemTypeTagDef>().FirstOrDefault(tag => tag.name.Equals("HandgunItem_TagDef"));
+                    if (handgunTagDef != null)
+                    {
+                        if (!TobiasHandgun.Tags.Contains(handgunTagDef))
+                        {
+                            TobiasHandgun.Tags.Add(handgunTagDef);
+                            Logger.LogInfo($"[CPWS] Added HandgunItem_TagDef to Tobias West handgun for proper pistol proficiency recognition");
+                        }
+                        else
+                        {
+                            Logger.LogInfo($"[CPWS] Tobias West handgun already has HandgunItem_TagDef");
+                        }
+                    }
+                    else
+                    {
+                        Logger.LogWarning($"[CPWS] HandgunItem_TagDef not found - Tobias West handgun may not be recognized by pistol proficiency mods");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError($"[CPWS] ApplyTobiasHandgunTagFix failed: {e.Message}");
+            }
+        }
     
     }
+
 }
