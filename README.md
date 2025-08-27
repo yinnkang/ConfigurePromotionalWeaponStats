@@ -5,15 +5,17 @@ Phoenix Point mod for configuring promotional weapon stats (damage, ammo, burst,
 ## Weapons
 
 - **Gold Ares** - Assault rifle
-- **Gold Firebird** - Shotgun  
-- **Gold Hel II** - Sniper rifle
-- **Phoenix Rising Firebird** - Special shotgun
-- **Neon White Deimos** - Special pistol
+- **Gold Firebird** - Sniper Rifle  
+- **Gold Hel II** - Heavy Cannon
+- **Phoenix Rising Firebird** - Sniper Rifle
+- **Neon White Deimos** - Assault rifle
+- **Neon Deimos** - Assault rifle
+- **Bonus: Tobias West pistol** 
 
 ## Configuration
 
 ### Per weapon
-- Base/Piercing/Paralysing damage
+- Damage (Base, Shred where applicable, Piercing has been added to most weapons)
 - Ammunition capacity, Burst fire, Projectiles per shot
 - Effective range, Action Point cost
 - Hands required, Weight, Stop on first hit
